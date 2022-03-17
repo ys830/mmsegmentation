@@ -451,27 +451,64 @@ class Normalize(object):
             dict: Normalized results, 'img_norm_cfg' key is added into
                 result dict.
         """
-        flag = results['img']
-        results['img'] = np.empty((flag.shape[0], flag.shape[0], 9), dtype=type(flag))
-        results['img'][:, :, 0:3] = flag
-        results['img'][:, :, 3:6] = flag
-        results['img'][:, :, 6:9] = flag
-        results['img'][:, :, 0:3] = mmcv.imnormalize(results['img'][:, :, 0:3], self.mean, self.std,
-                                                     self.to_rgb)
-        results['img'][:, :, 3:6] = mmcv.imnormalize(results['img'][:, :, 3:6], self.mean, self.std,
-                                                     self.to_rgb)
-        results['img'][:, :, 6:9] = mmcv.imnormalize(results['img'][:, :, 6:9], self.mean, self.std,
-                                                     self.to_rgb)
+        # flag = results['img']
+        # results['img'] = np.empty((flag.shape[0], flag.shape[0], 9), dtype=type(flag))
+        # results['img'][:, :, 0:3] = flag
+        # results['img'][:, :, 3:6] = flag
+        # results['img'][:, :, 6:9] = flag
+        # results['img'][:, :, 0:3] = mmcv.imnormalize(results['img'][:, :, 0:3], self.mean, self.std,
+        #                                              self.to_rgb)
+        # results['img'][:, :, 3:6] = mmcv.imnormalize(results['img'][:, :, 3:6], self.mean, self.std,
+        #                                              self.to_rgb)
+        # results['img'][:, :, 6:9] = mmcv.imnormalize(results['img'][:, :, 6:9], self.mean, self.std,
+        #                                              self.to_rgb)
+        results['img'] = mmcv.imnormalize(results['img'], self.mean, self.std,
+                                          self.to_rgb)
+        results['img_norm_cfg'] = dict(
+            mean=self.mean, std=self.std, to_rgb=self.to_rgb)
+        return results
 
-        # results['img'][:, :, 0:3] = mmcv.imnormalize(results['img'][:, :, 0:3], self.mean[0:3], self.std[0:3],
-        #                                              self.to_rgb)
-        # results['img'][:, :, 3:6] = mmcv.imnormalize(results['img'][:, :, 3:6], self.mean[3:6], self.std[3:6],
-        #                                              self.to_rgb)
-        # results['img'][:, :, 6:9] = mmcv.imnormalize(results['img'][:, :, 6:9], self.mean[6:9], self.std[6:9],
-        #                                              self.to_rgb)
+    def __repr__(self):
+        repr_str = self.__class__.__name__
+        repr_str += f'(mean={self.mean}, std={self.std}, to_rgb=' \
+                    f'{self.to_rgb})'
+        return repr_str
 
-        # results['img'] = mmcv.imnormalize(results['img'], self.mean, self.std,
-        #                                   self.to_rgb)
+
+@PIPELINES.register_module()
+class TiffNormalize(object):
+    """Normalize the tiffimage.
+
+    Added key is "img_norm_cfg".
+
+    Args:
+        mean (sequence): Mean values of 3 channels.
+        std (sequence): Std values of 3 channels.
+        to_rgb (bool): Whether to convert the image from BGR to RGB,
+            default is true.
+    """
+
+    def __init__(self, mean, std, to_rgb=True):
+        self.mean = np.array(mean, dtype=np.float32)
+        self.std = np.array(std, dtype=np.float32)
+        self.to_rgb = to_rgb
+
+    def __call__(self, results):
+        """Call function to normalize images.
+
+        Args:
+            results (dict): Result dict from loading pipeline.
+
+        Returns:
+            dict: Normalized results, 'img_norm_cfg' key is added into
+                result dict.
+        """
+        results['img'][:, :, 0:3] = mmcv.imnormalize(results['img'][:, :, 0:3], self.mean[0:3], self.std[0:3],
+                                                     self.to_rgb)
+        results['img'][:, :, 3:6] = mmcv.imnormalize(results['img'][:, :, 3:6], self.mean[3:6], self.std[3:6],
+                                                     self.to_rgb)
+        results['img'][:, :, 6:9] = mmcv.imnormalize(results['img'][:, :, 6:9], self.mean[6:9], self.std[6:9],
+                                                     self.to_rgb)
         results['img_norm_cfg'] = dict(
             mean=self.mean, std=self.std, to_rgb=self.to_rgb)
         return results
