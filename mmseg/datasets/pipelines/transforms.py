@@ -451,12 +451,24 @@ class Normalize(object):
             dict: Normalized results, 'img_norm_cfg' key is added into
                 result dict.
         """
-        results['img'][:, :, 0:3] = mmcv.imnormalize(results['img'][:, :, 0:3], self.mean[0:3], self.std[0:3],
+        flag = results['img']
+        results['img'] = np.empty((flag.shape[0], flag.shape[0], 9), dtype=type(flag))
+        results['img'][:, :, 0:3] = flag
+        results['img'][:, :, 3:6] = flag
+        results['img'][:, :, 6:9] = flag
+        results['img'][:, :, 0:3] = mmcv.imnormalize(results['img'][:, :, 0:3], self.mean, self.std,
                                                      self.to_rgb)
-        results['img'][:, :, 3:6] = mmcv.imnormalize(results['img'][:, :, 3:6], self.mean[3:6], self.std[3:6],
+        results['img'][:, :, 3:6] = mmcv.imnormalize(results['img'][:, :, 3:6], self.mean, self.std,
                                                      self.to_rgb)
-        results['img'][:, :, 6:9] = mmcv.imnormalize(results['img'][:, :, 6:9], self.mean[6:9], self.std[6:9],
+        results['img'][:, :, 6:9] = mmcv.imnormalize(results['img'][:, :, 6:9], self.mean, self.std,
                                                      self.to_rgb)
+
+        # results['img'][:, :, 0:3] = mmcv.imnormalize(results['img'][:, :, 0:3], self.mean[0:3], self.std[0:3],
+        #                                              self.to_rgb)
+        # results['img'][:, :, 3:6] = mmcv.imnormalize(results['img'][:, :, 3:6], self.mean[3:6], self.std[3:6],
+        #                                              self.to_rgb)
+        # results['img'][:, :, 6:9] = mmcv.imnormalize(results['img'][:, :, 6:9], self.mean[6:9], self.std[6:9],
+        #                                              self.to_rgb)
 
         # results['img'] = mmcv.imnormalize(results['img'], self.mean, self.std,
         #                                   self.to_rgb)
