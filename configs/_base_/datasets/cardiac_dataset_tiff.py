@@ -1,8 +1,8 @@
 dataset_type = 'renewCardiac2'
 data_root = './data/renewCardiacdataset2'
 img_norm_cfg = dict(
-    mean=[32.996, 32.714, 32.581, 32.996, 32.714, 32.581, 32.996, 32.714, 32.581],
-    std=[50.182, 49.895, 49.808, 50.182, 49.895, 49.808, 50.182, 49.895, 49.808],
+    mean=[32.631, 32.761, 33.038, 32.587, 32.717, 32.993,32.571, 32.701, 32.978],
+    std=[49.875, 49.960, 50.244, 49.819, 49.903, 50.187,49.779, 49.865, 50.150],
     to_rgb=False)
 # img_scale = (960, 999)
 img_scale = (112, 112)
@@ -15,7 +15,7 @@ train_tif_pipeline = [
     dict(type='RandomCrop', crop_size=crop_size, cat_max_ratio=0.75),
     dict(type='RandomFlip', prob=0),
     # dict(type='PhotoMetricDistortion'),
-    # dict(type='TiffNormalize', **img_norm_cfg),
+    dict(type='TiffNormalize', **img_norm_cfg),
     dict(type='Pad', size=crop_size, pad_val=0, seg_pad_val=255),
     dict(type='DefaultFormatBundle'),
     dict(type='Collect', keys=['img', 'gt_semantic_seg'])
@@ -30,6 +30,7 @@ test_tif_pipeline = [
         transforms=[
             dict(type='Resize', keep_ratio=True),
             dict(type='RandomFlip'),
+            dict(type='TiffNormalize', **img_norm_cfg),
             dict(type='ImageToTensor', keys=['img']),
             dict(type='Collect', keys=['img'])
         ])
