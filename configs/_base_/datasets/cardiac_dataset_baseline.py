@@ -1,9 +1,9 @@
 dataset_type = 'Cardiac'
-data_root = './data/Cardiacdataset'
+data_root = './data/fix_cardiacdataset'
 img_norm_cfg = dict(
-    mean=[32.996, 32.714, 32.581],
-    std=[50.182, 49.895, 49.808],
-    to_rgb=True)
+    mean=[32.581],
+    std=[49.808],
+    to_rgb=False)
 # img_scale = (960, 999)
 img_scale = (112, 112)
 # crop_size = (128, 128)
