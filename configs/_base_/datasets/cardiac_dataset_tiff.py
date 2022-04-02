@@ -1,8 +1,8 @@
 dataset_type = 'renewCardiac2'
-data_root = './data/renewCardiacdataset2'
+data_root = './data/fix_tiff_cardiacdataset'
 img_norm_cfg = dict(
-    mean=[32.631, 32.761, 33.038, 32.587, 32.717, 32.993,32.571, 32.701, 32.978],
-    std=[49.875, 49.960, 50.244, 49.819, 49.903, 50.187,49.779, 49.865, 50.150],
+    mean=[32.631, 32.587, 32.570],
+    std=[49.875, 49.819, 49.779],
     to_rgb=False)
 # img_scale = (960, 999)
 img_scale = (112, 112)
