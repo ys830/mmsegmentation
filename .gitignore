@@ -122,3 +122,5 @@ custom_log*
 *.jpg
 *.zip
 mmseg/datasets/pipelines/loading.bak
+# output file
+/result_CAMUS/
