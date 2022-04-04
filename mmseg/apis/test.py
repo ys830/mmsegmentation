@@ -97,11 +97,15 @@ def single_gpu_test(model,
             assert len(imgs) == len(img_metas)
 
             for img, img_meta in zip(imgs, img_metas):
-                h, w, _ = img_meta['img_shape']
-                img_show = img[:h, :w, :]
+                h, w = img_meta['img_shape']
+                img_show = img[:h, :w]
 
-                ori_h, ori_w = img_meta['ori_shape'][:-1]
+                ori_h, ori_w = img_meta['ori_shape']
                 img_show = mmcv.imresize(img_show, (ori_w, ori_h))
+                temp = np.empty((ori_h, ori_w, 3))
+                for i in range(temp.shape[2]):
+                    temp[:, :, i] = img_show
+                img_show = temp
 
                 if out_dir:
                     out_file = osp.join(out_dir, img_meta['ori_filename'])

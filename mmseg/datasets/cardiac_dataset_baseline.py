@@ -7,7 +7,7 @@ from .custom import CustomDataset
 class Cardiac(CustomDataset):
     CLASSES = ('background', 'LV')
 
-    PALETTE = [[0], [1]]
+    PALETTE = [[120, 120, 120], [6, 230, 230]]
 
     def __init__(self, **kwargs):
         super(Cardiac, self).__init__(
