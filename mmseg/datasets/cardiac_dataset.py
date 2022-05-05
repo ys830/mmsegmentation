@@ -12,7 +12,7 @@ class renewCardiac2(CustomDataset):
     def __init__(self, **kwargs):
         super(renewCardiac2, self).__init__(
             img_suffix='.tif',
-            seg_map_suffix='_label.png',
+            # seg_map_suffix='_label.png',
             reduce_zero_label=False,
             **kwargs)
         assert osp.exists(self.img_dir)
