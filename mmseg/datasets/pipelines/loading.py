@@ -61,12 +61,12 @@ class LoadImageFromFile(object):
         else:
             filename = results['img_info']['filename']
 
-        img_bytes = cv2.imread(filename, -1)
-        img = img_bytes
+        # img_bytes = cv2.imread(filename, -1)
+        # img = img_bytes
 
-        # img_bytes = self.file_client.get(filename)
-        # img = mmcv.imfrombytes(
-        #     img_bytes, flag=self.color_type, backend=self.imdecode_backend)
+        img_bytes = self.file_client.get(filename)
+        img = mmcv.imfrombytes(
+            img_bytes, flag=self.color_type, backend=self.imdecode_backend)
         
         if self.to_float32:
             img = img.astype(np.float32)

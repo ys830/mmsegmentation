@@ -123,4 +123,4 @@ custom_log*
 *.zip
 mmseg/datasets/pipelines/loading.bak
 # output file
-/result_CAMUS/
+/result_Car_0505/

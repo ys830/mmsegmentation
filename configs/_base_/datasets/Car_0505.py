@@ -1,8 +1,8 @@
 dataset_type = 'Cardiac'
 data_root = './data/Car_0505'
 img_norm_cfg = dict(
-    mean=[32.581],
-    std=[49.808],
+    mean=[44.726, 44.726, 44.726,],
+    std=[44.026, 44.026, 44.026],
     to_rgb=False)
 # img_scale = (960, 999)
 img_scale = (160, 160)

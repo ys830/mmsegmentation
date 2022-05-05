@@ -4,6 +4,7 @@ import tempfile
 import warnings
 
 import mmcv
+import cv2
 import numpy as np
 import torch
 from mmcv.engine import collect_results_cpu, collect_results_gpu
@@ -77,6 +78,7 @@ def single_gpu_test(model,
 
     model.eval()
     results = []
+    write_list = list()
     dataset = data_loader.dataset
     prog_bar = mmcv.ProgressBar(len(dataset))
     # The pipeline about how the data_loader retrieval samples from dataset:
@@ -97,21 +99,29 @@ def single_gpu_test(model,
             assert len(imgs) == len(img_metas)
 
             for img, img_meta in zip(imgs, img_metas):
-                h, w = img_meta['img_shape']
-                img_show = img[:h, :w]
+                h, w, _ = img_meta['img_shape']
+                img_show = img[:h, :w, :]
 
-                ori_h, ori_w = img_meta['ori_shape']
+                ori_h, ori_w = img_meta['ori_shape'][:-1]
                 img_show = mmcv.imresize(img_show, (ori_w, ori_h))
-                temp = np.empty((ori_h, ori_w, 3))
-                for i in range(temp.shape[2]):
-                    temp[:, :, i] = img_show
-                img_show = temp
+                # temp = np.empty((ori_h, ori_w, 3))
+                # for i in range(temp.shape[2]):
+                #     temp[:, :, i] = img_show
+                # img_show = temp
 
                 if out_dir:
                     out_file = osp.join(out_dir, img_meta['ori_filename'])
+
+                    #保存segmap并计算pixel
+                    segmap_out_file = osp.join(out_dir, img_meta['ori_filename'].split(".")[0]+'_segmap.png')
+                    cv2.imwrite(segmap_out_file, result[0]*255)
+                    num_pixels = result[0].sum()
+                    write_list.append(img_meta['ori_filename'] + ' ' + str(num_pixels) + '\n')
+
                 else:
                     out_file = None
-
+                
+            
                 model.module.show_result(
                     img_show,
                     result,
@@ -137,6 +147,9 @@ def single_gpu_test(model,
         batch_size = len(result)
         for _ in range(batch_size):
             prog_bar.update()
+    
+    with open(osp.join(out_dir, 'info.txt'),'w') as f:
+        f.writelines(write_list)
 
     return results
 
