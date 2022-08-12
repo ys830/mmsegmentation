@@ -79,7 +79,8 @@ def single_gpu_test(model,
 
     model.eval()
     results = []
-    write_list = list()
+    LV_write_list = list()
+    RV_write_list = list()
     dataset = data_loader.dataset
     prog_bar = mmcv.ProgressBar(len(dataset))
     # The pipeline about how the data_loader retrieval samples from dataset:
@@ -109,7 +110,7 @@ def single_gpu_test(model,
                 # for i in range(temp.shape[2]):
                 #     temp[:, :, i] = img_show
                 # img_show = temp
-
+                
                 if out_dir:
                     out_file = osp.join(out_dir, img_meta['ori_filename'])
 
@@ -117,11 +118,19 @@ def single_gpu_test(model,
                     segmap_out_file = osp.join(out_dir, img_meta['ori_filename'].split(".")[0]+'_segmap.png')
                     cv2.imwrite(segmap_out_file, result[0]*255)
                     RV = result[0][:,:] == 2
+                    int_RV = RV.astype(np.uint8)*255
                     LV = result[0][:,:] == 1
+                    int_LV = LV.astype(np.uint8)*255
                     RV_pixels = len(result[0][RV])
                     LV_pixels = len(result[0][LV])
                     # num_pixels = result[0].sum()
-                    write_list.append(img_meta['ori_filename'] + ' ' + 'RV_pixels:' + str(RV_pixels) + ' ' + 'LV_pixels:' + str(LV_pixels) + '\n')
+                    LV_write_list.append(img_meta['ori_filename'] + ' ' + 'LV_pixels' + ' ' + str(LV_pixels) + '\n')
+                    RV_write_list.append(img_meta['ori_filename'] + ' ' + 'RV_pixels' + ' ' + str(RV_pixels) + '\n')
+                    # gray = cv2.cvtColor(result[0]*255,cv2.COLOR_BGR2GRAY) 
+                    # ret, binary = cv2.threshold(result[0],127,255,cv2.THRESH_BINARY)
+                    contours, _ = cv2.findContours(int_RV,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+                    cv2.polylines(img_show, contours, True, (0, 0, 255), 1) 
+
 
                 else:
                     out_file = None
@@ -153,8 +162,11 @@ def single_gpu_test(model,
         for _ in range(batch_size):
             prog_bar.update()
     
-    with open(osp.join(out_dir, 'info.txt'),'w') as f:
-        f.writelines(write_list)
+    with open(osp.join(out_dir, 'LV_info.txt'),'w') as f:
+        f.writelines(LV_write_list)
+
+    with open(osp.join(out_dir, 'RV_info.txt'),'w') as f:
+        f.writelines(RV_write_list)
 
     return results
 

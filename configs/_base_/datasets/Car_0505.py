@@ -1,13 +1,13 @@
 dataset_type = 'Cardiac'
 # data_root = './data/2class_cardiac_mysplit/'
-data_root = './data/test_cut'
+data_root = './data/08es_res'
 img_norm_cfg = dict(
     # mean=[32.600, 32.600, 32.600],
     # std=[50.263, 50.263,50.263],
-    mean=[25.983,25.983,25.983],
-    std=[45.654,45.654,45.654],
+    mean=[36.952,36.952,36.952],
+    std=[53.576,53.576,53.576],
     to_rgb=False)
-img_scale = (128,112)
+img_scale = (112,128)
 # img_scale =(112,112)
 crop_size = (128,128)
 # crop_size = (112,112)
