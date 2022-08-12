@@ -1,5 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import os.path as osp
+import re
 import tempfile
 import warnings
 
@@ -115,8 +116,12 @@ def single_gpu_test(model,
                     #保存segmap并计算pixel
                     segmap_out_file = osp.join(out_dir, img_meta['ori_filename'].split(".")[0]+'_segmap.png')
                     cv2.imwrite(segmap_out_file, result[0]*255)
-                    num_pixels = result[0].sum()
-                    write_list.append(img_meta['ori_filename'] + ' ' + str(num_pixels) + '\n')
+                    RV = result[0][:,:] == 2
+                    LV = result[0][:,:] == 1
+                    RV_pixels = len(result[0][RV])
+                    LV_pixels = len(result[0][LV])
+                    # num_pixels = result[0].sum()
+                    write_list.append(img_meta['ori_filename'] + ' ' + 'RV_pixels:' + str(RV_pixels) + ' ' + 'LV_pixels:' + str(LV_pixels) + '\n')
 
                 else:
                     out_file = None

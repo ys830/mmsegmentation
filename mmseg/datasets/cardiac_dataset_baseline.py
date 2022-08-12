@@ -5,9 +5,9 @@ from .custom import CustomDataset
 
 @DATASETS.register_module()
 class Cardiac(CustomDataset):
-    CLASSES = ('background', 'LV')
+    CLASSES = ('background', 'LV', 'RV')
 
-    PALETTE = [[120, 120, 120], [6, 230, 230]]
+    PALETTE = [[120, 120, 120], [6, 230, 230],[0, 0, 255]]
 
     def __init__(self, **kwargs):
         super(Cardiac, self).__init__(

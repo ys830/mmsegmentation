@@ -124,3 +124,6 @@ custom_log*
 mmseg/datasets/pipelines/loading.bak
 # output file
 /result_Car_0505/
+result*
+pretrained
+results
