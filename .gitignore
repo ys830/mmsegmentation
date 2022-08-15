@@ -127,3 +127,4 @@ mmseg/datasets/pipelines/loading.bak
 result*
 pretrained
 results
+video*

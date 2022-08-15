@@ -126,10 +126,8 @@ def single_gpu_test(model,
                     # num_pixels = result[0].sum()
                     LV_write_list.append(img_meta['ori_filename'] + ' ' + 'LV_pixels' + ' ' + str(LV_pixels) + '\n')
                     RV_write_list.append(img_meta['ori_filename'] + ' ' + 'RV_pixels' + ' ' + str(RV_pixels) + '\n')
-                    # gray = cv2.cvtColor(result[0]*255,cv2.COLOR_BGR2GRAY) 
-                    # ret, binary = cv2.threshold(result[0],127,255,cv2.THRESH_BINARY)
-                    contours, _ = cv2.findContours(int_RV,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-                    cv2.polylines(img_show, contours, True, (0, 0, 255), 1) 
+                    # contours, _ = cv2.findContours(int_RV,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+                    # cv2.polylines(img_show, contours, True, (0, 0, 255), 1) 
 
 
                 else:
