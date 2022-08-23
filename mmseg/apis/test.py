@@ -118,20 +118,27 @@ def single_gpu_test(model,
                     segmap_out_file = osp.join(out_dir, img_meta['ori_filename'].split(".")[0]+'_segmap.png')
                     cv2.imwrite(segmap_out_file, result[0]*255)
                     RV = result[0][:,:] == 2
-                    int_RV = RV.astype(np.uint8)*255
+                    # int_RV = RV.astype(np.uint8)*255
                     LV = result[0][:,:] == 1
-                    int_LV = LV.astype(np.uint8)*255
+                    # int_LV = LV.astype(np.uint8)*255
                     RV_pixels = len(result[0][RV])
                     LV_pixels = len(result[0][LV])
                     # num_pixels = result[0].sum()
                     LV_write_list.append(img_meta['ori_filename'] + ' ' + 'LV_pixels' + ' ' + str(LV_pixels) + '\n')
                     RV_write_list.append(img_meta['ori_filename'] + ' ' + 'RV_pixels' + ' ' + str(RV_pixels) + '\n')
+            
                     # contours, _ = cv2.findContours(int_RV,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
                     # cv2.polylines(img_show, contours, True, (0, 0, 255), 1) 
 
 
                 else:
                     out_file = None
+                
+                with open(osp.join(out_dir, 'LV_info.txt'),'w') as f:
+                        f.writelines(LV_write_list)
+
+                with open(osp.join(out_dir, 'RV_info.txt'),'w') as f:
+                        f.writelines(RV_write_list)
                 
             
                 model.module.show_result(
@@ -160,12 +167,6 @@ def single_gpu_test(model,
         for _ in range(batch_size):
             prog_bar.update()
     
-    with open(osp.join(out_dir, 'LV_info.txt'),'w') as f:
-        f.writelines(LV_write_list)
-
-    with open(osp.join(out_dir, 'RV_info.txt'),'w') as f:
-        f.writelines(RV_write_list)
-
     return results
 
 

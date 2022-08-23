@@ -1,16 +1,12 @@
 dataset_type = 'Cardiac'
-# data_root = './data/2class_cardiac_mysplit/'
-data_root = './data/video_pro/19/'
+data_root = './data/2class_cardiac_split/'
 img_norm_cfg = dict(
-    # mean=[32.600, 32.600, 32.600],
-    # std=[50.263, 50.263,50.263],
-    mean=[30.496,30.496, 30.496],
-    std=[58.157,58.157,58.157],
+    mean=[32.241,32.241, 32.241],
+    std=[49.890,49.890,49.890],
     to_rgb=False)
-# img_scale = (160,160)
+
 img_scale =(112,112)
-crop_size = (128,128)
-# crop_size = (112,112)
+crop_size = (112,112)
 train_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations'),
@@ -61,6 +57,6 @@ data = dict(
         type=dataset_type,
         data_root=data_root,
         img_dir='img_dir/TEST',
-        # ann_dir='ann_dir/TEST',
+        ann_dir='ann_dir/TEST',
         pipeline=test_pipeline)
     )

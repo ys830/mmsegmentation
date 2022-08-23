@@ -128,3 +128,6 @@ result*
 pretrained
 results
 video*
+cropimg.ipynb
+getmean.ipynb
+savevideo.ipynb
