@@ -135,9 +135,8 @@ class EncoderDecoder(BaseSegmentor):
         Returns:
             dict[str, Tensor]: a dictionary of loss components
         """
-
-        x = self.extract_feat(img)
-
+        x = self.extract_feat(img) #x是一个list,记录五个stage的输出，x[4]=[4,64,112,112]
+ 
         losses = dict()
 
         loss_decode = self._decode_head_forward_train(x, img_metas,
@@ -199,7 +198,7 @@ class EncoderDecoder(BaseSegmentor):
 
     def whole_inference(self, img, img_meta, rescale):
         """Inference with full image."""
-
+        
         seg_logit = self.encode_decode(img, img_meta)
         if rescale:
             # support dynamic shape for onnx
@@ -213,7 +212,7 @@ class EncoderDecoder(BaseSegmentor):
                 mode='bilinear',
                 align_corners=self.align_corners,
                 warning=False)
-
+                
         return seg_logit
 
     def inference(self, img, img_meta, rescale):
@@ -240,15 +239,16 @@ class EncoderDecoder(BaseSegmentor):
         else:
             seg_logit = self.whole_inference(img, img_meta, rescale)
         output = F.softmax(seg_logit, dim=1)
-        flip = img_meta[0]['flip']
-        if flip:
-            flip_direction = img_meta[0]['flip_direction']
-            assert flip_direction in ['horizontal', 'vertical']
-            if flip_direction == 'horizontal':
-                output = output.flip(dims=(3, ))
-            elif flip_direction == 'vertical':
-                output = output.flip(dims=(2, ))
-
+    
+        # flip = img_meta[0]['flip']
+        # if flip:
+        #     flip_direction = img_meta[0]['flip_direction']
+        #     assert flip_direction in ['horizontal', 'vertical']
+        #     if flip_direction == 'horizontal':
+        #         output = output.flip(dims=(3, ))
+        #     elif flip_direction == 'vertical':
+        #         output = output.flip(dims=(2, ))
+        # flip = img_meta[0]['flip']
         return output
 
     def simple_test(self, img, img_meta, rescale=True):
@@ -280,5 +280,5 @@ class EncoderDecoder(BaseSegmentor):
         seg_pred = seg_logit.argmax(dim=1)
         seg_pred = seg_pred.cpu().numpy()
         # unravel batch dim
-        seg_pred = list(seg_pred)
+        seg_pred = list(seg_pred)     
         return seg_pred

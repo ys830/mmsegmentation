@@ -20,6 +20,7 @@ from .stare import STAREDataset
 from .voc import PascalVOCDataset
 from .cardiac_dataset_baseline import Cardiac
 from .cardiac_dataset import renewCardiac2
+from .siren import Siren
 
 __all__ = [
     'CustomDataset', 'build_dataloader', 'ConcatDataset', 'RepeatDataset',
@@ -28,5 +29,5 @@ __all__ = [
     'PascalContextDataset59', 'ChaseDB1Dataset', 'DRIVEDataset', 'HRFDataset',
     'STAREDataset', 'DarkZurichDataset', 'NightDrivingDataset',
     'COCOStuffDataset', 'LoveDADataset', 'MultiImageMixDataset',
-    'iSAIDDataset', 'ISPRSDataset', 'PotsdamDataset', 'Cardiac', 'renewCardiac2'
+    'iSAIDDataset', 'ISPRSDataset', 'PotsdamDataset', 'Cardiac', 'renewCardiac2','Siren'
 ]

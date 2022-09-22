@@ -23,9 +23,9 @@ def f_score(precision, recall, beta=1):
     return score
 
 
-def intersect_and_union(pred_label,
-                        label,
-                        num_classes,
+def intersect_and_union(pred_label, #[112,112]
+                        label, #[1,112,112]
+                        num_classes, #2
                         ignore_index,
                         label_map=dict(),
                         reduce_zero_label=False):
@@ -71,7 +71,8 @@ def intersect_and_union(pred_label,
         label = label - 1
         label[label == 254] = 255
 
-    mask = (label != ignore_index)
+    mask = (label != ignore_index) #[1,112,112]
+   
     pred_label = pred_label[mask]
     label = label[mask]
 

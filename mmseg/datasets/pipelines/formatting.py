@@ -263,8 +263,8 @@ class Collect(object):
     def __init__(self,
                  keys,
                  meta_keys=('filename', 'ori_filename', 'ori_shape',
-                            'img_shape', 'pad_shape', 'scale_factor', 'flip',
-                            'flip_direction', 'img_norm_cfg')):
+                            'img_shape', 'pad_shape', 'scale_factor', 
+                            'img_norm_cfg')):
         self.keys = keys
         self.meta_keys = meta_keys
 
@@ -287,7 +287,10 @@ class Collect(object):
             img_meta[key] = results[key]
         data['img_metas'] = DC(img_meta, cpu_only=True)
         for key in self.keys:
+
             data[key] = results[key]
+        # print(data['img'].data.shape)
+        # exit(-1)
         return data
 
     def __repr__(self):

@@ -78,6 +78,7 @@ def binary_cross_entropy(pred,
     Returns:
         torch.Tensor: The calculated loss
     """
+
     if pred.dim() != label.dim():
         assert (pred.dim() == 2 and label.dim() == 1) or (
                 pred.dim() == 4 and label.dim() == 3), \

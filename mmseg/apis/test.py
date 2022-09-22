@@ -94,60 +94,69 @@ def single_gpu_test(model,
         with torch.no_grad():
             result = model(return_loss=False, **data)
 
-        if show or out_dir:
-            img_tensor = data['img'][0]
-            img_metas = data['img_metas'][0].data[0]
-            imgs = tensor2imgs(img_tensor, **img_metas[0]['img_norm_cfg'])
-            assert len(imgs) == len(img_metas)
+        # if show or out_dir:
+        #     img_tensor = data['img'][0]
+        #     img_metas = data['img_metas'][0].data[0]
+        #     imgs = tensor2imgs(img_tensor, **img_metas[0]['img_norm_cfg'])
+        #     assert len(imgs) == len(img_metas)
 
-            for img, img_meta in zip(imgs, img_metas):
-                h, w, _ = img_meta['img_shape']
-                img_show = img[:h, :w, :]
+        #     for img, img_meta in zip(imgs, img_metas):
+        #         h, w, _ = img_meta['img_shape']
+        #         img_show = img[:h, :w, :]
 
-                ori_h, ori_w = img_meta['ori_shape'][:-1]
-                img_show = mmcv.imresize(img_show, (ori_w, ori_h))
-                # temp = np.empty((ori_h, ori_w, 3))
-                # for i in range(temp.shape[2]):
-                #     temp[:, :, i] = img_show
-                # img_show = temp
+        #         ori_h, ori_w = img_meta['ori_shape'][:-1]
+        #         img_show = mmcv.imresize(img_show, (ori_w, ori_h))
+        #         # temp = np.empty((ori_h, ori_w, 3))
+        #         # for i in range(temp.shape[2]):
+        #         #     temp[:, :, i] = img_show
+        #         # img_show = temp
                 
+        #         if out_dir:
+        #             out_file = osp.join(out_dir, img_meta['ori_filename'])
+
+        #             #保存segmap并计算pixel
+        #             segmap_out_file = osp.join(out_dir, img_meta['ori_filename'].split(".")[0]+'_segmap.png')
+        #             cv2.imwrite(segmap_out_file, result[0]*255)
+        #             RV = result[0][:,:] == 2
+        #             # int_RV = RV.astype(np.uint8)*255
+        #             LV = result[0][:,:] == 1
+        #             # int_LV = LV.astype(np.uint8)*255
+        #             RV_pixels = len(result[0][RV])
+        #             LV_pixels = len(result[0][LV])
+        #             # num_pixels = result[0].sum()
+        #             LV_write_list.append(img_meta['ori_filename'] + ' ' + 'LV_pixels' + ' ' + str(LV_pixels) + '\n')
+        #             RV_write_list.append(img_meta['ori_filename'] + ' ' + 'RV_pixels' + ' ' + str(RV_pixels) + '\n')
+            
+        #             # contours, _ = cv2.findContours(int_RV,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+        #             # cv2.polylines(img_show, contours, True, (0, 0, 255), 1) 
+
+
+        if show or out_dir:
+            img_metas = data['img_metas'][0].data[0]
+
+            for img_meta in img_metas:              
                 if out_dir:
                     out_file = osp.join(out_dir, img_meta['ori_filename'])
 
                     #保存segmap并计算pixel
                     segmap_out_file = osp.join(out_dir, img_meta['ori_filename'].split(".")[0]+'_segmap.png')
                     cv2.imwrite(segmap_out_file, result[0]*255)
-                    RV = result[0][:,:] == 2
-                    # int_RV = RV.astype(np.uint8)*255
-                    LV = result[0][:,:] == 1
-                    # int_LV = LV.astype(np.uint8)*255
-                    RV_pixels = len(result[0][RV])
-                    LV_pixels = len(result[0][LV])
-                    # num_pixels = result[0].sum()
-                    LV_write_list.append(img_meta['ori_filename'] + ' ' + 'LV_pixels' + ' ' + str(LV_pixels) + '\n')
-                    RV_write_list.append(img_meta['ori_filename'] + ' ' + 'RV_pixels' + ' ' + str(RV_pixels) + '\n')
-            
-                    # contours, _ = cv2.findContours(int_RV,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-                    # cv2.polylines(img_show, contours, True, (0, 0, 255), 1) 
-
-
-                else:
-                    out_file = None
+        
                 
-                with open(osp.join(out_dir, 'LV_info.txt'),'w') as f:
-                        f.writelines(LV_write_list)
+                # with open(osp.join(out_dir, 'LV_info.txt'),'w') as f:
+                #         f.writelines(LV_write_list)
 
-                with open(osp.join(out_dir, 'RV_info.txt'),'w') as f:
-                        f.writelines(RV_write_list)
+                # with open(osp.join(out_dir, 'RV_info.txt'),'w') as f:
+                #         f.writelines(RV_write_list)
                 
             
-                model.module.show_result(
-                    img_show,
-                    result,
-                    palette=dataset.PALETTE,
-                    show=show,
-                    out_file=out_file,
-                    opacity=opacity)
+                # model.module.show_result(
+                #     img_show,
+                #     result,
+                #     palette=dataset.PALETTE,
+                #     show=show,
+                #     out_file=out_file,
+                #     opacity=opacity)
 
         if efficient_test:
             result = [np2tmp(_, tmpdir='.efficient_test') for _ in result]

@@ -5,6 +5,11 @@ import mmcv
 import numpy as np
 import cv2
 import tifffile as tiff
+import scipy.io as io
+from einops import rearrange
+
+from sklearn import preprocessing
+
 
 from ..builder import PIPELINES
 
@@ -150,6 +155,7 @@ class LoadAnnotations(object):
             gt_semantic_seg[gt_semantic_seg == 0] = 255
             gt_semantic_seg = gt_semantic_seg - 1
             gt_semantic_seg[gt_semantic_seg == 254] = 255
+        # results['gt_semantic_seg'] = rearrange(gt_semantic_seg, 'h w -> 1 h w')
         results['gt_semantic_seg'] = gt_semantic_seg
         results['seg_fields'].append('gt_semantic_seg')
         return results
@@ -199,6 +205,58 @@ class LoadTIFImageFromFile(object):
             mean=np.zeros(num_channels, dtype=np.float32),
             std=np.ones(num_channels, dtype=np.float32),
             to_rgb=False)
+        return results
+
+    def __repr__(self):
+        repr_str = self.__class__.__name__
+        repr_str += f'(to_float32={self.to_float32},'
+        repr_str += f"color_type='{self.color_type}',"
+        repr_str += f"imdecode_backend='{self.imdecode_backend}')"
+        return repr_str
+
+@PIPELINES.register_module()
+class LoadMATImageFromFile(object):
+    def __init__(self,
+                 to_float32=True,
+                 color_type='color',
+                 file_client_args=dict(backend='disk'),
+                 imdecode_backend='cv2'):
+        self.to_float32 = to_float32
+        self.color_type = color_type
+        self.file_client_args = file_client_args.copy()
+        self.file_client = None
+        self.imdecode_backend = imdecode_backend
+
+    def __call__(self, results):
+        if self.file_client is None:
+            self.file_client = mmcv.FileClient(**self.file_client_args)
+        if results.get('img_prefix') is not None:
+            filename = osp.join(results['img_prefix'],
+                                results['img_info']['filename'])
+        else:
+            filename = results['img_info']['filename']
+              
+        img_bytes = io.loadmat(filename)
+        # min_max_scaler = preprocessing.MinMaxScaler()
+        # img_bytes = min_max_scaler.fit_transform(img_bytes['layer4'])
+        img_bytes= rearrange(img_bytes['layer4'], '(h w) c -> h w c', h = 112, w =112)
+        # img_bytes = rearrange(img_bytes, 'h w c -> c h w')
+        img_bytes = np.array(img_bytes, dtype='float32')
+        img = img_bytes
+
+        results['filename'] = filename
+        results['ori_filename'] = results['img_info']['filename']
+        results['img'] = img
+        results['img_shape'] = img.shape
+        results['ori_shape'] = img.shape
+        results['pad_shape'] = img.shape
+        results['scale_factor'] = 1.0
+        num_channels = 1 if len(img.shape) < 3 else img.shape[2]
+        results['img_norm_cfg'] = dict(
+            mean=np.zeros(num_channels, dtype=np.float32),
+            std=np.ones(num_channels, dtype=np.float32),
+            to_rgb=False)
+
         return results
 
     def __repr__(self):
